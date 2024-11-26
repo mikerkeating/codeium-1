@@ -1,14 +1,14 @@
 'use client'
 
-import { mockIssues, mockUsers, mockLabels, type Priority, type Issue } from '@/lib/mock-data'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
+import { mockIssues, mockLabels, mockUsers } from '@/lib/mock-data'
 import { Button } from '@/components/ui/button'
-import { formatDistanceToNow, format } from 'date-fns'
-import { notFound, useRouter } from 'next/navigation'
-import { ChevronLeft, Circle, Clock, ExternalLink, Flag } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { ChevronLeft, Circle, Clock, ExternalLink } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Header } from '@/components/layout/header'
+import Image from 'next/image'
+import { cn } from '@/lib/utils'
 
 export default function IssuePage({
   params,
@@ -46,13 +46,6 @@ export default function IssuePage({
     in_progress: 'text-purple-600',
     closed: 'text-red-600',
   }[issue.status]
-
-  const priorityColor = {
-    low: 'text-gray-500',
-    medium: 'text-blue-500',
-    high: 'text-orange-500',
-    urgent: 'text-red-500',
-  }[issue.priority]
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -96,28 +89,11 @@ export default function IssuePage({
                       {issue.status.replace('_', ' ')}
                     </span>
                   </Badge>
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset transition-colors',
-                      {
-                        'border-gray-500 bg-gray-50 hover:bg-gray-100': issue.priority === 'low',
-                        'border-blue-500 bg-blue-50 hover:bg-blue-100': issue.priority === 'medium',
-                        'border-orange-500 bg-orange-50 hover:bg-orange-100': issue.priority === 'high',
-                        'border-red-500 bg-red-50 hover:bg-red-100': issue.priority === ('urgent' as Priority),
-                      }
-                    )}
-                  >
-                    <Flag className={`h-3 w-3 ${priorityColor}`} />
-                    <span className={priorityColor}>
-                      {issue.priority.charAt(0).toUpperCase() + issue.priority.slice(1)}
-                    </span>
-                  </Badge>
                   <span className="text-sm text-gray-600">
                     <span className="font-medium text-gray-900">
                       {mockUsers.find(user => user.id === issue.createdBy)?.name}
                     </span>
-                    {' '}opened this issue {formatDistanceToNow(new Date(issue.createdAt))} ago
+                    {' '}opened this issue 
                   </span>
                 </div>
               </div>
@@ -149,15 +125,14 @@ export default function IssuePage({
                   </div>
                   {(issue.screenshots ?? []).length > 0 && (
                     <div className="mt-4 space-y-4">
-                      {issue.screenshots?.map((screenshot) => (
-                        <div key={screenshot.id} className="space-y-2">
-                          <p className="text-sm text-gray-500">
-                            {screenshot.filename}
-                          </p>
-                          <img
+                      {issue.screenshots?.map((screenshot, index) => (
+                        <div key={index} className="rounded-lg overflow-hidden border">
+                          <Image
                             src={screenshot.url}
                             alt={screenshot.filename}
-                            className="rounded-lg border"
+                            width={800}
+                            height={600}
+                            className="w-full h-auto"
                           />
                         </div>
                       ))}
@@ -206,7 +181,7 @@ export default function IssuePage({
                   <h3 className="text-sm font-medium mb-2 text-gray-600">Due Date</h3>
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="h-4 w-4 text-gray-500" />
-                    <span>{format(new Date(issue.dueDate), 'PPP')}</span>
+                    <span></span>
                   </div>
                 </div>
               )}

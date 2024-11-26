@@ -2,24 +2,18 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { MultiSelect } from '@/components/ui/multi-select'
+import { Header } from '@/components/layout/header'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { issueSchema, type IssueInput } from '@/lib/validations/issue'
 import { mockLabels, mockUsers } from '@/lib/mock-data'
-import { MultiSelect } from '@/components/ui/multi-select'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { ChevronLeft, Upload } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { z } from 'zod'
-import { Header } from '@/components/layout/header'
+import { ChevronLeft, Upload } from 'lucide-react'
+import { useState } from 'react'
+import Image from 'next/image'
 
 export default function NewIssuePage() {
   const router = useRouter()
@@ -49,17 +43,16 @@ export default function NewIssuePage() {
     console.log(data)
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [previewUrls, setPreviewUrls] = useState<string[]>([])
+
+  const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
 
-    const screenshots = watch('screenshots') || []
-    const newScreenshots = Array.from(files)
-
-    setValue('screenshots', [...screenshots, ...newScreenshots])
+    const urls = Array.from(files).map((file) => URL.createObjectURL(file))
+    setPreviewUrls(urls)
+    setValue('screenshots', Array.from(files))
   }
-
-  const screenshots = watch('screenshots')
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -88,7 +81,7 @@ export default function NewIssuePage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <label htmlFor="title">Title</label>
               <Input
                 id="title"
                 placeholder="Issue title"
@@ -101,7 +94,7 @@ export default function NewIssuePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <label htmlFor="description">Description</label>
               <Textarea
                 id="description"
                 placeholder="Add a description..."
@@ -115,10 +108,10 @@ export default function NewIssuePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label>Priority</Label>
+                <label>Priority</label>
                 <Select
                   value={watch('priority')}
-                  onValueChange={(value) => setValue('priority', value)}
+                  onValueChange={(value: 'low' | 'medium' | 'high' | 'urgent') => setValue('priority', value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select priority" />
@@ -136,10 +129,10 @@ export default function NewIssuePage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Status</Label>
+                <label>Status</label>
                 <Select
                   value={watch('status')}
-                  onValueChange={(value) => setValue('status', value)}
+                  onValueChange={(value: 'open' | 'in_progress' | 'closed') => setValue('status', value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
@@ -158,14 +151,14 @@ export default function NewIssuePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label>Labels</Label>
+                <label>Labels</label>
                 <MultiSelect
                   items={mockLabels.map(label => ({
                     value: label.id,
                     label: label.name,
                   }))}
-                  value={watch('labels')}
-                  onValueChange={(value) => setValue('labels', value as string[])}
+                  selected={watch('labels')}
+                  onValueChange={(value) => setValue('labels', value)}
                   placeholder="Select labels"
                 />
                 {errors.labels && (
@@ -174,14 +167,14 @@ export default function NewIssuePage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Assignees</Label>
+                <label>Assignees</label>
                 <MultiSelect
                   items={mockUsers.map(user => ({
                     value: user.id,
                     label: user.name,
                   }))}
-                  value={watch('assignees')}
-                  onValueChange={(value) => setValue('assignees', value as string[])}
+                  selected={watch('assignees')}
+                  onValueChange={(value) => setValue('assignees', value)}
                   placeholder="Select assignees"
                 />
                 {errors.assignees && (
@@ -191,7 +184,7 @@ export default function NewIssuePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="url">URL</Label>
+              <label htmlFor="url">URL</label>
               <Input
                 id="url"
                 type="url"
@@ -205,55 +198,39 @@ export default function NewIssuePage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Screenshots</Label>
+              <label>Screenshots</label>
               <div className="flex items-center gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => document.getElementById('screenshots')?.click()}
-                  className={`${errors.screenshots ? 'border-red-500' : ''}`}
+                  className="gap-2"
                 >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Upload screenshots
+                  <Upload className="h-4 w-4" />
+                  Add Screenshots
                 </Button>
-                <Input
-                  id="screenshots"
+                <input
                   type="file"
-                  accept="image/*"
+                  id="screenshots"
                   multiple
+                  accept="image/*"
                   className="hidden"
-                  onChange={handleFileChange}
+                  onChange={handleScreenshotChange}
                 />
               </div>
-              {errors.screenshots && (
-                <p className="text-sm text-red-500">{errors.screenshots.message}</p>
-              )}
-              {watch('screenshots')?.length > 0 && (
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  {watch('screenshots').map((url, index) => (
-                    <div key={index} className="relative group">
-                      <img
-                        src={URL.createObjectURL(url)}
-                        alt={`Screenshot ${index + 1}`}
-                        className="w-full h-40 object-cover rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const screenshots = watch('screenshots')
-                          setValue(
-                            'screenshots',
-                            screenshots.filter((_, i) => i !== index)
-                          )
-                        }}
-                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="mt-4 space-y-4">
+                {previewUrls.map((url, index) => (
+                  <div key={index} className="rounded-lg overflow-hidden border">
+                    <Image
+                      src={url}
+                      alt={`Preview ${index + 1}`}
+                      width={800}
+                      height={600}
+                      className="w-full h-auto"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="flex justify-end">
