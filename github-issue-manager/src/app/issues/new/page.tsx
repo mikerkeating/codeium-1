@@ -2,8 +2,13 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { issueSchema, type IssueInput } from '@/lib/validations/issue'
+import { mockLabels, mockUsers } from '@/lib/mock-data'
+import { MultiSelect } from '@/components/ui/multi-select'
 import {
   Select,
   SelectContent,
@@ -11,64 +16,81 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useState } from 'react'
-import Link from 'next/link'
 import { ChevronLeft, Upload } from 'lucide-react'
-import { mockLabels, mockUsers, Priority } from '@/lib/mock-data'
-import { MultiSelect } from '@/components/ui/multi-select'
+import { useRouter } from 'next/navigation'
+import { z } from 'zod'
 
 export default function NewIssuePage() {
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    priority: '' as Priority,
-    dueDate: '',
-    labels: [] as string[],
-    assignees: [] as string[],
-    url: '',
-    screenshots: [] as File[],
+  const router = useRouter()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<IssueInput>({
+    resolver: zodResolver(issueSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      priority: 'low',
+      status: 'open',
+      labels: [],
+      assignees: [],
+      url: '',
+      screenshots: [],
+      dueDate: ''
+    },
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: IssueInput) => {
     // TODO: Implement issue creation
-    console.log(formData)
+    console.log(data)
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFormData(prev => ({
-        ...prev,
-        screenshots: [...Array.from(e.target.files!)],
-      }))
-    }
+    const files = e.target.files
+    if (!files) return
+
+    const screenshots = watch('screenshots') || []
+    const newScreenshots = Array.from(files)
+
+    setValue('screenshots', [...screenshots, ...newScreenshots])
   }
+
+  const screenshots = watch('screenshots')
 
   return (
     <div className="container max-w-4xl py-6">
-      <div className="mb-6">
-        <Link 
-          href="/issues" 
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+      <header className="flex items-center gap-4 mb-8">
+        <Button
+          variant="ghost"
+          className="gap-2"
+          onClick={() => router.push('/')}
         >
-          <ChevronLeft className="w-4 h-4 mr-1" />
+          <ChevronLeft className="h-4 w-4" />
           Back to issues
-        </Link>
-      </div>
+        </Button>
+        <div>
+          <h1 className="text-2xl font-semibold">New Issue</h1>
+          <p className="text-sm text-gray-500">
+            Create a new issue to track bugs, feature requests, or other tasks.
+          </p>
+        </div>
+      </header>
 
-      <h1 className="text-2xl font-semibold mb-8">Create new issue</h1>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="title">Title</Label>
           <Input
             id="title"
             placeholder="Issue title"
-            value={formData.title}
-            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-            className="w-full"
-            required
+            {...register('title')}
+            className={`w-full ${errors.title ? 'border-red-500' : ''}`}
           />
+          {errors.title && (
+            <p className="text-sm text-red-500">{errors.title.message}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -76,19 +98,20 @@ export default function NewIssuePage() {
           <Textarea
             id="description"
             placeholder="Add a description..."
-            value={formData.description}
-            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-            className="min-h-[200px]"
-            required
+            {...register('description')}
+            className={`min-h-[200px] ${errors.description ? 'border-red-500' : ''}`}
           />
+          {errors.description && (
+            <p className="text-sm text-red-500">{errors.description.message}</p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="priority">Priority</Label>
+            <Label>Priority</Label>
             <Select
-              value={formData.priority}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value as Priority }))}
+              value={watch('priority')}
+              onValueChange={(value) => setValue('priority', value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select priority" />
@@ -100,16 +123,29 @@ export default function NewIssuePage() {
                 <SelectItem value="urgent">Urgent</SelectItem>
               </SelectContent>
             </Select>
+            {errors.priority && (
+              <p className="text-sm text-red-500">{errors.priority.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="dueDate">Due Date</Label>
-            <Input
-              id="dueDate"
-              type="datetime-local"
-              value={formData.dueDate}
-              onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
-            />
+            <Label>Status</Label>
+            <Select
+              value={watch('status')}
+              onValueChange={(value) => setValue('status', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="open">Open</SelectItem>
+                <SelectItem value="in_progress">In Progress</SelectItem>
+                <SelectItem value="closed">Closed</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.status && (
+              <p className="text-sm text-red-500">{errors.status.message}</p>
+            )}
           </div>
         </div>
 
@@ -117,27 +153,33 @@ export default function NewIssuePage() {
           <div className="space-y-2">
             <Label>Labels</Label>
             <MultiSelect
-              options={mockLabels.map(label => ({
+              items={mockLabels.map(label => ({
                 value: label.id,
                 label: label.name,
               }))}
-              selected={formData.labels}
-              onChange={(values) => setFormData(prev => ({ ...prev, labels: values }))}
+              value={watch('labels')}
+              onValueChange={(value) => setValue('labels', value as string[])}
               placeholder="Select labels"
             />
+            {errors.labels && (
+              <p className="text-sm text-red-500">{errors.labels.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label>Assignees</Label>
             <MultiSelect
-              options={mockUsers.map(user => ({
+              items={mockUsers.map(user => ({
                 value: user.id,
                 label: user.name,
               }))}
-              selected={formData.assignees}
-              onChange={(values) => setFormData(prev => ({ ...prev, assignees: values }))}
+              value={watch('assignees')}
+              onValueChange={(value) => setValue('assignees', value as string[])}
               placeholder="Select assignees"
             />
+            {errors.assignees && (
+              <p className="text-sm text-red-500">{errors.assignees.message}</p>
+            )}
           </div>
         </div>
 
@@ -147,19 +189,22 @@ export default function NewIssuePage() {
             id="url"
             type="url"
             placeholder="Related URL (optional)"
-            value={formData.url}
-            onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
+            {...register('url')}
+            className={errors.url ? 'border-red-500' : ''}
           />
+          {errors.url && (
+            <p className="text-sm text-red-500">{errors.url.message}</p>
+          )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="screenshots">Screenshots</Label>
-          <div className="flex items-center gap-4">
+          <Label>Screenshots</Label>
+          <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => document.getElementById('screenshots')?.click()}
-              className="w-full"
+              className={`${errors.screenshots ? 'border-red-500' : ''}`}
             >
               <Upload className="w-4 h-4 mr-2" />
               Upload screenshots
@@ -173,9 +218,33 @@ export default function NewIssuePage() {
               onChange={handleFileChange}
             />
           </div>
-          {formData.screenshots.length > 0 && (
-            <div className="text-sm text-muted-foreground mt-2">
-              {formData.screenshots.length} file(s) selected
+          {errors.screenshots && (
+            <p className="text-sm text-red-500">{errors.screenshots.message}</p>
+          )}
+          {watch('screenshots')?.length > 0 && (
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              {watch('screenshots').map((url, index) => (
+                <div key={index} className="relative group">
+                  <img
+                    src={URL.createObjectURL(url)}
+                    alt={`Screenshot ${index + 1}`}
+                    className="w-full h-40 object-cover rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const screenshots = watch('screenshots')
+                      setValue(
+                        'screenshots',
+                        screenshots.filter((_, i) => i !== index)
+                      )
+                    }}
+                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
             </div>
           )}
         </div>

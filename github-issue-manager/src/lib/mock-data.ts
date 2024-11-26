@@ -1,5 +1,3 @@
-import { Issue } from '@/types'
-
 export type Priority = 'low' | 'medium' | 'high' | 'urgent'
 export type Status = 'open' | 'in_progress' | 'closed'
 
@@ -31,12 +29,12 @@ export interface Issue {
   priority: Priority
   createdAt: string
   updatedAt: string
-  dueDate?: string
-  labels: Label[]
-  assignees: User[]
-  creator: User
+  createdBy: string
+  labels?: string[]
+  assignees?: string[]
   url?: string
-  screenshots: Screenshot[]
+  screenshots?: Screenshot[]
+  dueDate?: string
 }
 
 export const mockLabels: Label[] = [
@@ -93,10 +91,9 @@ export const mockIssues: Issue[] = [
     priority: 'high',
     createdAt: '2024-01-10T10:00:00Z',
     updatedAt: '2024-01-10T10:00:00Z',
-    dueDate: '2024-01-20T23:59:59Z',
-    labels: [mockLabels[0], mockLabels[3]],
-    assignees: [mockUsers[1]],
-    creator: mockUsers[0],
+    createdBy: '1',
+    labels: ['1', '4'],
+    assignees: ['2'],
     url: 'https://github.com/org/repo/issues/1',
     screenshots: [mockScreenshots[0]],
   },
@@ -108,10 +105,9 @@ export const mockIssues: Issue[] = [
     priority: 'medium',
     createdAt: '2024-01-09T15:30:00Z',
     updatedAt: '2024-01-11T09:00:00Z',
-    dueDate: '2024-01-25T23:59:59Z',
-    labels: [mockLabels[1], mockLabels[3]],
-    assignees: [mockUsers[0], mockUsers[2]],
-    creator: mockUsers[1],
+    createdBy: '2',
+    labels: ['2', '4'],
+    assignees: ['1', '3'],
     url: 'https://github.com/org/repo/issues/2',
     screenshots: [mockScreenshots[1]],
   },

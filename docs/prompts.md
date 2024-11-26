@@ -81,3 +81,11 @@ Error fix
 Let's add a create issue page. 
 
 Let's add fields to the create issue page: Due Date, Priority, Labels, Assignees, URL, Screenshot. Please extend the mock data to include these fields.
+
+### Prompt 10
+
+Let's add those new fields to the issue details page
+
+### Prompt 11
+
+Let's add form validation

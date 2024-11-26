@@ -1,6 +1,6 @@
 'use client'
 
-import { mockIssues } from '@/lib/mock-data'
+import { mockIssues, mockUsers, mockLabels, type Priority, type Issue } from '@/lib/mock-data'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -9,13 +9,13 @@ import { notFound, useRouter } from 'next/navigation'
 import { ChevronLeft, Circle, Clock, ExternalLink, Flag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-export default function IssueDetailsPage({
+export default function IssuePage({
   params,
 }: {
   params: { id: string }
 }) {
   const router = useRouter()
-  const issue = mockIssues.find((i) => i.id === params.id)
+  const issue = mockIssues.find((i) => i.id === params.id) as Issue
 
   if (!issue) {
     notFound()
@@ -37,14 +37,16 @@ export default function IssueDetailsPage({
   return (
     <div className="container max-w-5xl py-6">
       {/* Back Button */}
-      <Button
-        variant="ghost"
-        className="mb-4 -ml-2 text-gray-600 hover:text-gray-900"
-        onClick={() => router.back()}
-      >
-        <ChevronLeft className="mr-1 h-4 w-4" />
-        Back to Issues
-      </Button>
+      <header className="flex items-center gap-4 mb-8">
+        <Button
+          variant="ghost"
+          className="gap-2"
+          onClick={() => router.push('/')}
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Back to Issues
+        </Button>
+      </header>
 
       {/* Title Section */}
       <div className="border-b pb-6">
@@ -74,12 +76,12 @@ export default function IssueDetailsPage({
               <Badge
                 variant="outline"
                 className={cn(
-                  'flex items-center gap-1.5',
+                  'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset transition-colors',
                   {
                     'border-gray-500 bg-gray-50 hover:bg-gray-100': issue.priority === 'low',
                     'border-blue-500 bg-blue-50 hover:bg-blue-100': issue.priority === 'medium',
                     'border-orange-500 bg-orange-50 hover:bg-orange-100': issue.priority === 'high',
-                    'border-red-500 bg-red-50 hover:bg-red-100': issue.priority === 'urgent',
+                    'border-red-500 bg-red-50 hover:bg-red-100': issue.priority === ('urgent' as Priority),
                   }
                 )}
               >
@@ -89,7 +91,9 @@ export default function IssueDetailsPage({
                 </span>
               </Badge>
               <span className="text-sm text-gray-600">
-                <span className="font-medium text-gray-900">{issue.creator.name}</span>
+                <span className="font-medium text-gray-900">
+                  {mockUsers.find(user => user.id === issue.createdBy)?.name}
+                </span>
                 {' '}opened this issue {formatDistanceToNow(new Date(issue.createdAt))} ago
               </span>
             </div>
@@ -106,10 +110,13 @@ export default function IssueDetailsPage({
         <div className="md:col-span-2">
           <div className="flex items-start gap-3 bg-white rounded-lg border p-4">
             <Avatar className="mt-1">
-              <AvatarImage src={issue.creator.avatarUrl} alt={issue.creator.name} />
+              <AvatarImage 
+                src={mockUsers.find(user => user.id === issue.createdBy)?.avatarUrl} 
+                alt={mockUsers.find(user => user.id === issue.createdBy)?.name} 
+              />
               <AvatarFallback>
-                {issue.creator.name
-                  .split(' ')
+                {mockUsers.find(user => user.id === issue.createdBy)?.name
+                  ?.split(' ')
                   .map((n) => n[0])
                   .join('')}
               </AvatarFallback>
@@ -120,13 +127,13 @@ export default function IssueDetailsPage({
                   <p>{issue.description}</p>
                 </div>
               </div>
-              {issue.screenshots.length > 0 && (
+              {(issue.screenshots ?? []).length > 0 && (
                 <div className="mt-4 space-y-4">
-                  {issue.screenshots.map((screenshot) => (
+                  {issue.screenshots?.map((screenshot) => (
                     <div key={screenshot.id} className="space-y-2">
-                      <div className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-500">
                         {screenshot.filename}
-                      </div>
+                      </p>
                       <img
                         src={screenshot.url}
                         alt={screenshot.filename}
@@ -145,29 +152,32 @@ export default function IssueDetailsPage({
           {/* Assignees */}
           <div>
             <h3 className="text-sm font-medium mb-2 text-gray-600">Assignees</h3>
-            {issue.assignees.length > 0 ? (
-              <div className="space-y-2">
-                {issue.assignees.map((assignee) => (
-                  <div
-                    key={assignee.id}
-                    className="flex items-center gap-2"
-                  >
-                    <Avatar className="h-5 w-5">
-                      <AvatarImage src={assignee.avatarUrl} alt={assignee.name} />
-                      <AvatarFallback>
-                        {assignee.name
-                          .split(' ')
-                          .map((n) => n[0])
-                          .join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm">{assignee.name}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <span className="text-sm text-gray-500">No assignees</span>
-            )}
+            <div className="flex flex-wrap gap-2">
+              {issue.assignees && issue.assignees.length > 0 ? (
+                issue.assignees.map((assigneeId) => {
+                  const assignee = mockUsers.find(u => u.id === assigneeId)
+                  return assignee ? (
+                    <div
+                      key={assignee.id}
+                      className="flex items-center gap-2 bg-gray-50 rounded-full pl-1 pr-3 py-1"
+                    >
+                      <Avatar className="h-5 w-5">
+                        <AvatarImage src={assignee.avatarUrl} />
+                        <AvatarFallback>
+                          {assignee.name
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm">{assignee.name}</span>
+                    </div>
+                  ) : null
+                })
+              ) : (
+                <p className="text-sm text-gray-500">No assignees</p>
+              )}
+            </div>
           </div>
 
           {/* Due Date */}
@@ -184,17 +194,24 @@ export default function IssueDetailsPage({
           {/* Labels */}
           <div>
             <h3 className="text-sm font-medium mb-2 text-gray-600">Labels</h3>
-            <div className="flex flex-wrap gap-1.5">
-              {issue.labels.map((label) => (
-                <Badge
-                  key={label.id}
-                  variant="outline"
-                  style={{ backgroundColor: label.color + '20' }}
-                  className="px-2 py-0.5 text-xs hover:bg-opacity-20"
-                >
-                  {label.name}
-                </Badge>
-              ))}
+            <div className="flex flex-wrap gap-1">
+              {issue.labels && issue.labels.length > 0 ? (
+                issue.labels.map((labelId) => {
+                  const label = mockLabels.find(l => l.id === labelId)
+                  return label ? (
+                    <Badge
+                      key={label.id}
+                      variant="outline"
+                      style={{ backgroundColor: label.color + '20' }}
+                      className="px-2 py-0.5 text-xs hover:bg-opacity-20"
+                    >
+                      {label.name}
+                    </Badge>
+                  ) : null
+                })
+              ) : (
+                <p className="text-sm text-gray-500">No labels</p>
+              )}
             </div>
           </div>
 

@@ -1,10 +1,11 @@
 'use client'
 
-import { Issue } from '@/types'
 import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { Circle } from 'lucide-react'
+import { mockLabels, mockUsers, type Issue } from '@/lib/mock-data'
+import { cn } from '@/lib/utils'
 
 interface IssueCardProps {
   issue: Issue
@@ -12,60 +13,87 @@ interface IssueCardProps {
 
 export function IssueCard({ issue }: IssueCardProps) {
   const statusColor = {
-    open: 'text-green-600',
-    in_progress: 'text-purple-600',
-    closed: 'text-red-600',
+    open: 'bg-green-500',
+    in_progress: 'bg-blue-500',
+    closed: 'bg-gray-500',
   }[issue.status]
 
+  const creator = mockUsers.find(user => user.id === issue.createdBy)
+
   return (
-    <div className="border-b py-3 hover:bg-slate-50">
-      <div className="flex items-start gap-4 px-4">
-        <div className="mt-1">
-          <Circle 
-            className={`h-4 w-4 ${statusColor}`} 
-            fill="currentColor" 
-            strokeWidth={0}
-          />
-        </div>
+    <div className="bg-white rounded-lg border p-4 hover:border-gray-400 transition-colors">
+      <div className="flex items-start gap-3">
+        <Avatar className="mt-1">
+          <AvatarImage src={creator?.avatarUrl} />
+          <AvatarFallback>
+            {creator?.name
+              .split(' ')
+              .map((n) => n[0])
+              .join('')}
+          </AvatarFallback>
+        </Avatar>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Link
-              href={`/issues/${issue.id}`}
-              className="text-lg font-semibold hover:text-blue-600 hover:underline"
-            >
-              {issue.title}
-            </Link>
-            <div className="flex gap-1.5 flex-wrap">
-              {issue.labels.map((label) => (
-                <Badge
-                  key={label.id}
-                  variant="outline"
-                  style={{ backgroundColor: label.color + '20' }}
-                  className="px-2 py-0.5 text-xs hover:bg-opacity-20"
-                >
-                  {label.name}
-                </Badge>
-              ))}
+          {issue.labels && issue.labels.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-1">
+              {issue.labels.map((labelId) => {
+                const label = mockLabels.find(l => l.id === labelId)
+                return label ? (
+                  <Badge
+                    key={label.id}
+                    variant="outline"
+                    style={{ backgroundColor: label.color + '20' }}
+                    className="px-2 py-0.5 text-xs hover:bg-opacity-20"
+                  >
+                    {label.name}
+                  </Badge>
+                ) : null
+              })}
             </div>
-          </div>
-          <div className="mt-1 text-sm text-gray-600">
-            #{issue.id} opened {formatDistanceToNow(new Date(issue.createdAt))} ago by{' '}
-            <span className="font-medium text-gray-900">{issue.creator.name}</span>
+          )}
+          <Link
+            href={`/issues/${issue.id}`}
+            className="text-lg font-semibold hover:text-blue-600 hover:underline line-clamp-1"
+          >
+            {issue.title}
+          </Link>
+          <div className="mt-1 flex items-center gap-2 text-sm text-gray-600">
+            <span>#{issue.id}</span>
+            <span>·</span>
+            <div
+              className={cn('w-2 h-2 rounded-full', statusColor)}
+              title={`Status: ${issue.status}`}
+            />
+            <span>
+              opened {formatDistanceToNow(new Date(issue.createdAt))} ago by{' '}
+              <span className="font-medium">{creator?.name}</span>
+            </span>
+            {issue.assignees && issue.assignees.length > 0 && (
+              <>
+                <span>·</span>
+                <div className="flex -space-x-1">
+                  {issue.assignees.map((assigneeId) => {
+                    const assignee = mockUsers.find(u => u.id === assigneeId)
+                    return assignee ? (
+                      <Avatar
+                        key={assignee.id}
+                        className="h-5 w-5 border-2 border-white"
+                        title={assignee.name}
+                      >
+                        <AvatarImage src={assignee.avatarUrl} />
+                        <AvatarFallback>
+                          {assignee.name
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : null
+                  })}
+                </div>
+              </>
+            )}
           </div>
         </div>
-        {issue.assignees.length > 0 && (
-          <div className="flex -space-x-2">
-            {issue.assignees.map((assignee) => (
-              <img
-                key={assignee.id}
-                src={assignee.avatarUrl}
-                alt={assignee.name}
-                className="h-6 w-6 rounded-full ring-2 ring-white"
-                title={assignee.name}
-              />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   )

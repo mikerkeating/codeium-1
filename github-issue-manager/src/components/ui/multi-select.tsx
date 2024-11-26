@@ -1,8 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { X } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -16,32 +15,52 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Check, ChevronsUpDown, X } from 'lucide-react'
 
-export interface Option {
-  value: string
-  label: string
-}
-
-interface MultiSelectProps {
-  options: Option[]
-  selected: string[]
-  onChange: (values: string[]) => void
+export interface MultiSelectProps {
+  items?: { value: string; label: string }[]
   placeholder?: string
-  className?: string
+  value?: string | string[]
+  onValueChange: (value: string | string[]) => void
+  multiple?: boolean
 }
 
 export function MultiSelect({
-  options,
-  selected,
-  onChange,
-  placeholder = 'Select options',
-  className,
+  items = [],
+  placeholder = 'Select items...',
+  value,
+  onValueChange,
+  multiple = true,
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
+  const selected = React.useMemo(() => {
+    if (multiple) {
+      return Array.isArray(value) ? value : []
+    }
+    return value ? [value] : []
+  }, [value, multiple])
 
-  const handleUnselect = (value: string) => {
-    onChange(selected.filter((item) => item !== value))
+  const handleSelect = (currentValue: string) => {
+    if (multiple) {
+      const newSelected = selected.includes(currentValue)
+        ? selected.filter((item) => item !== currentValue)
+        : [...selected, currentValue]
+      onValueChange(newSelected)
+    } else {
+      onValueChange(currentValue)
+    }
+    if (!multiple) {
+      setOpen(false)
+    }
+  }
+
+  const handleDeselect = (currentValue: string) => {
+    if (multiple) {
+      const newSelected = selected.filter((item) => item !== currentValue)
+      onValueChange(newSelected)
+    } else {
+      onValueChange('')
+    }
   }
 
   return (
@@ -51,76 +70,62 @@ export function MultiSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn('w-full justify-between', className)}
+          className="w-full justify-between"
         >
           <div className="flex gap-1 flex-wrap">
             {selected.length === 0 && placeholder}
             {selected.map((value) => {
-              const option = options.find((opt) => opt.value === value)
-              return option ? (
-                <Badge
-                  variant="secondary"
-                  key={value}
-                  className="mr-1 mb-1"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleUnselect(value)
-                  }}
+              const item = items.find((opt) => opt.value === value)
+              return item ? (
+                <div
+                  key={item.value}
+                  className="bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded-sm text-sm flex items-center gap-1"
                 >
-                  {option.label}
-                  <button
-                    className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  {item.label}
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    className="hover:bg-secondary/80 rounded-sm cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDeselect(item.value)
+                    }}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleUnselect(value)
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleDeselect(item.value)
                       }
                     }}
-                    onMouseDown={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      handleUnselect(value)
-                    }}
                   >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                  </button>
-                </Badge>
+                    <X className="h-3 w-3" />
+                  </span>
+                </div>
               ) : null
             })}
           </div>
+          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
           <CommandInput placeholder={`Search ${placeholder.toLowerCase()}...`} />
-          <CommandEmpty>No option found.</CommandEmpty>
+          <CommandEmpty>No items found.</CommandEmpty>
           <CommandGroup className="max-h-64 overflow-auto">
-            {options.map((option) => (
+            {items.map((item) => (
               <CommandItem
-                key={option.value}
-                onSelect={() => {
-                  onChange(
-                    selected.includes(option.value)
-                      ? selected.filter((item) => item !== option.value)
-                      : [...selected, option.value]
-                  )
-                  setOpen(true)
-                }}
+                key={item.value}
+                onSelect={() => handleSelect(item.value)}
               >
-                <div
+                <Check
                   className={cn(
-                    'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
-                    selected.includes(option.value)
-                      ? 'bg-primary text-primary-foreground'
-                      : 'opacity-50 [&_svg]:invisible'
+                    'mr-2 h-4 w-4',
+                    selected.includes(item.value)
+                      ? 'opacity-100'
+                      : 'opacity-0'
                   )}
-                >
-                  <span className="h-4 w-4 text-xs">✓</span>
-                </div>
-                {option.label}
+                />
+                {item.label}
               </CommandItem>
             ))}
           </CommandGroup>
