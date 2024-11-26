@@ -1,107 +1,131 @@
 import { Issue } from '@/types'
 
-export const mockIssues: Issue[] = [
+export type Priority = 'low' | 'medium' | 'high' | 'urgent'
+export type Status = 'open' | 'in_progress' | 'closed'
+
+export interface Label {
+  id: string
+  name: string
+  color: string
+}
+
+export interface User {
+  id: string
+  name: string
+  email: string
+  avatarUrl: string
+}
+
+export interface Screenshot {
+  id: string
+  url: string
+  filename: string
+  uploadedAt: string
+}
+
+export interface Issue {
+  id: string
+  title: string
+  description: string
+  status: Status
+  priority: Priority
+  createdAt: string
+  updatedAt: string
+  dueDate?: string
+  labels: Label[]
+  assignees: User[]
+  creator: User
+  url?: string
+  screenshots: Screenshot[]
+}
+
+export const mockLabels: Label[] = [
+  { id: '1', name: 'bug', color: '#dc3545' },
+  { id: '2', name: 'feature', color: '#28a745' },
+  { id: '3', name: 'documentation', color: '#17a2b8' },
+  { id: '4', name: 'enhancement', color: '#007bff' },
+  { id: '5', name: 'help wanted', color: '#6610f2' },
+  { id: '6', name: 'good first issue', color: '#ffc107' },
+]
+
+export const mockUsers: User[] = [
   {
     id: '1',
-    title: 'Implement OAuth Authentication',
-    description: 'Set up GitHub OAuth authentication flow for user login and authorization.',
-    priority: 'high',
-    status: 'in_progress',
-    labels: ['authentication', 'security'],
-    assignees: [
-      {
-        id: '1',
-        name: 'John Doe',
-        avatarUrl: 'https://avatars.githubusercontent.com/u/1'
-      }
-    ],
-    createdAt: new Date('2024-01-15').toISOString(),
-    updatedAt: new Date('2024-01-16').toISOString(),
-    creator: {
-      id: '2',
-      name: 'Jane Smith',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/2'
-    }
+    name: 'John Doe',
+    email: 'john@example.com',
+    avatarUrl: 'https://avatars.githubusercontent.com/u/1?v=4',
   },
   {
     id: '2',
-    title: 'Add Dark Mode Support',
-    description: 'Implement dark mode theme switching functionality with system preference detection.',
-    priority: 'medium',
-    status: 'open',
-    labels: ['ui', 'enhancement'],
-    assignees: [],
-    createdAt: new Date('2024-01-14').toISOString(),
-    updatedAt: new Date('2024-01-14').toISOString(),
-    creator: {
-      id: '1',
-      name: 'John Doe',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/1'
-    }
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    avatarUrl: 'https://avatars.githubusercontent.com/u/2?v=4',
   },
   {
     id: '3',
-    title: 'Fix Mobile Responsiveness',
-    description: 'Address layout issues on mobile devices, particularly in the issue list view.',
-    priority: 'high',
-    status: 'open',
-    labels: ['bug', 'mobile'],
-    assignees: [
-      {
-        id: '2',
-        name: 'Jane Smith',
-        avatarUrl: 'https://avatars.githubusercontent.com/u/2'
-      }
-    ],
-    createdAt: new Date('2024-01-13').toISOString(),
-    updatedAt: new Date('2024-01-15').toISOString(),
-    creator: {
-      id: '3',
-      name: 'Mike Johnson',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/3'
-    }
+    name: 'Bob Johnson',
+    email: 'bob@example.com',
+    avatarUrl: 'https://avatars.githubusercontent.com/u/3?v=4',
   },
-  {
-    id: '4',
-    title: 'Implement Search Functionality',
-    description: 'Add search capability to filter issues by title, description, and labels.',
-    priority: 'medium',
-    status: 'open',
-    labels: ['feature', 'search'],
-    assignees: [
-      {
-        id: '1',
-        name: 'John Doe',
-        avatarUrl: 'https://avatars.githubusercontent.com/u/1'
-      },
-      {
-        id: '3',
-        name: 'Mike Johnson',
-        avatarUrl: 'https://avatars.githubusercontent.com/u/3'
-      }
-    ],
-    createdAt: new Date('2024-01-12').toISOString(),
-    updatedAt: new Date('2024-01-12').toISOString(),
-    creator: {
-      id: '2',
-      name: 'Jane Smith',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/2'
-    }
-  },
-  {
-    id: '5',
-    title: 'Performance Optimization',
-    description: 'Optimize application performance by implementing caching and lazy loading.',
-    priority: 'low',
-    status: 'closed',
-    labels: ['optimization', 'performance'],
-    assignees: [],
-    createdAt: new Date('2024-01-10').toISOString(),
-    updatedAt: new Date('2024-01-11').toISOString(),
-    creator: {
-      id: '3',
-      name: 'Mike Johnson',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/3'
-    }
-  }
 ]
+
+export const mockScreenshots: Screenshot[] = [
+  {
+    id: '1',
+    url: 'https://picsum.photos/800/600',
+    filename: 'error-screenshot.png',
+    uploadedAt: '2024-01-10T10:30:00Z',
+  },
+  {
+    id: '2',
+    url: 'https://picsum.photos/800/601',
+    filename: 'feature-mockup.png',
+    uploadedAt: '2024-01-11T14:20:00Z',
+  },
+]
+
+export const mockIssues: Issue[] = [
+  {
+    id: '1',
+    title: 'Fix navigation bug in mobile view',
+    description: 'The navigation menu is not responsive on mobile devices',
+    status: 'open',
+    priority: 'high',
+    createdAt: '2024-01-10T10:00:00Z',
+    updatedAt: '2024-01-10T10:00:00Z',
+    dueDate: '2024-01-20T23:59:59Z',
+    labels: [mockLabels[0], mockLabels[3]],
+    assignees: [mockUsers[1]],
+    creator: mockUsers[0],
+    url: 'https://github.com/org/repo/issues/1',
+    screenshots: [mockScreenshots[0]],
+  },
+  {
+    id: '2',
+    title: 'Add dark mode support',
+    description: 'Implement dark mode theme across the application',
+    status: 'in_progress',
+    priority: 'medium',
+    createdAt: '2024-01-09T15:30:00Z',
+    updatedAt: '2024-01-11T09:00:00Z',
+    dueDate: '2024-01-25T23:59:59Z',
+    labels: [mockLabels[1], mockLabels[3]],
+    assignees: [mockUsers[0], mockUsers[2]],
+    creator: mockUsers[1],
+    url: 'https://github.com/org/repo/issues/2',
+    screenshots: [mockScreenshots[1]],
+  },
+]
+
+export const priorityColors: Record<Priority, string> = {
+  low: '#28a745',
+  medium: '#ffc107',
+  high: '#dc3545',
+  urgent: '#6f42c1',
+}
+
+export const statusColors: Record<Status, string> = {
+  open: '#28a745',
+  in_progress: '#ffc107',
+  closed: '#6c757d',
+}

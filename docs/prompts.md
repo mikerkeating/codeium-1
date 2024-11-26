@@ -68,10 +68,16 @@ Please add the issue details page so that we can see an issue on its own page
 
 let's add a back button to return to the issues list
 
-## # Prommpt 8
+### Prommpt 8
 
 Let's add some styling. Let's make the issue list and issue details page look like github
 
 The styling has not shown in the app; please check
 
 Error fix
+
+### Prompt 9
+
+Let's add a create issue page. 
+
+Let's add fields to the create issue page: Due Date, Priority, Labels, Assignees, URL, Screenshot. Please extend the mock data to include these fields.

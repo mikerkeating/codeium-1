@@ -38,11 +38,12 @@ export function IssueCard({ issue }: IssueCardProps) {
             <div className="flex gap-1.5 flex-wrap">
               {issue.labels.map((label) => (
                 <Badge
-                  key={label}
+                  key={label.id}
                   variant="outline"
-                  className="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200"
+                  style={{ backgroundColor: label.color + '20' }}
+                  className="px-2 py-0.5 text-xs hover:bg-opacity-20"
                 >
-                  {label}
+                  {label.name}
                 </Badge>
               ))}
             </div>

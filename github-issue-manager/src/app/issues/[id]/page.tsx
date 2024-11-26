@@ -134,11 +134,12 @@ export default function IssueDetailsPage({
             <div className="flex flex-wrap gap-1.5">
               {issue.labels.map((label) => (
                 <Badge
-                  key={label}
+                  key={label.id}
                   variant="outline"
-                  className="px-2 py-0.5 text-xs bg-gray-50 hover:bg-gray-100"
+                  style={{ backgroundColor: label.color + '20' }}
+                  className="px-2 py-0.5 text-xs hover:bg-opacity-20"
                 >
-                  {label}
+                  {label.name}
                 </Badge>
               ))}
             </div>
