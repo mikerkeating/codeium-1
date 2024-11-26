@@ -55,7 +55,8 @@ Please add a standard gitignore file for the stack
 
 ### Prompt 2 
 
-Let's add a standard gitignore file for the stack
+Would you like me to continue with creating the initial components and pages for the GitHub issue manager? 
+-> yes
 
 ### Prompt 3
 
