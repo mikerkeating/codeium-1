@@ -10,7 +10,7 @@ export function IssueList() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between gap-4 pb-4">
-        <div className="flex-1 flex items-center gap-2 max-w-lg">
+        <div className="flex-1 flex items-center gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             <input
@@ -24,9 +24,6 @@ export function IssueList() {
             Filters
           </Button>
         </div>
-        <Button className="bg-green-600 hover:bg-green-700 text-white">
-          New Issue
-        </Button>
       </div>
 
       {/* List Header */}

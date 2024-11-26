@@ -89,3 +89,11 @@ Let's add those new fields to the issue details page
 ### Prompt 11
 
 Let's add form validation
+
+### Prompt 12
+
+N
+
+### Prompt 13
+
+Please add the header from the home page into both the issue details and issue create pages

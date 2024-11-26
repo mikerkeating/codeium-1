@@ -52,9 +52,11 @@ export function IssueCard({ issue }: IssueCardProps) {
           )}
           <Link
             href={`/issues/${issue.id}`}
-            className="text-lg font-semibold hover:text-blue-600 hover:underline line-clamp-1"
+            className="block group"
           >
-            {issue.title}
+            <h3 className="text-base font-semibold text-gray-900 group-hover:text-blue-600 truncate">
+              {issue.title}
+            </h3>
           </Link>
           <div className="mt-1 flex items-center gap-2 text-sm text-gray-600">
             <span>#{issue.id}</span>
