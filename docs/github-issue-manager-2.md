@@ -60,32 +60,32 @@ Would you like me to continue with creating the initial components and pages for
 
 ### Prompt 3
 
-Please add DS_store to the gitignore
-
-### Prompt 4 
-
-Let's Create the main issue management interface ⚠ Port 3000 is in use, trying 3001 instead.
- ⚠ Port 3001 is in use, trying 3002 instead.
- ⚠ Port 3002 is in use, trying 3003 instead.
- ⚠ Port 3003 is in use, trying 3004 instead.
- ⚠ Port 3004 is in use, trying 3005 instead.
- ⚠ Port 3005 is in use, trying 3006 instead.
- ⚠ Port 3006 is in use, trying 3007 instead.
- ⚠ Port 3007 is in use, trying 3008 instead.
- ⚠ Port 3008 is in use, trying 3009 instead.
- ⚠ Port 3009 is in use, trying 3010 instead.
-<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /Users/macbookuser/Code/codeium-1/github-issue-manager/.next/cache/webpack/server-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
-
-
-### Prompt 5
-
 how can i see the interface?
+
+Let's kill all next processes; clear the cache and restart the dev server
+
+pkill -f next
+rm -rf .next
+npm cache clean --force
+rm -rf node_modules
+npm install
 
 followed by variuous error fixes
 
+### Prompt 4
+
+The page returns 404 cannot be found ... The 404 error occurs because we haven't created an index page yet. Let's create the home page for the application:
+
+### Prompt 5
+
+Since we haven't set up the GitHub OAuth credentials yet, you'll see the unauthenticated view. Would you like me to help you set up the GitHub OAuth credentials next?
+
 ### Prompt 6
 
-Please would you Add some mock data so we can see actual issues instead of the loading state
+This is great; thank you. Let's now pull issues from github and display them in the issue list. What do we need to do?
+
+---
+
 
 ### Prompt 7
 
