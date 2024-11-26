@@ -64,3 +64,24 @@ export async function getGitHubIssue(
     comments,
   }
 }
+
+export async function createGitHubIssue(
+  accessToken: string,
+  owner: string,
+  repo: string,
+  title: string,
+  body: string
+) {
+  const octokit = new Octokit({
+    auth: accessToken,
+  })
+
+  const { data } = await octokit.issues.create({
+    owner,
+    repo,
+    title,
+    body,
+  })
+
+  return data
+}

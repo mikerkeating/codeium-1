@@ -7,15 +7,20 @@ import { cn } from '@/lib/utils'
 
 interface IssueCardProps {
   issue: GitHubIssue
+  owner: string
+  repo: string
 }
 
-export function IssueCard({ issue }: IssueCardProps) {
+export function IssueCard({ issue, owner, repo }: IssueCardProps) {
   const updatedAt = formatDistance(new Date(issue.updated_at), new Date(), {
     addSuffix: true,
   })
 
   return (
-    <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+    <Link
+      href={`/issues/${owner}/${repo}/${issue.number}`}
+      className="block rounded-lg border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:bg-accent/5"
+    >
       <div className="flex items-start justify-between">
         <div className="flex items-start space-x-4">
           <Avatar className="h-8 w-8">
@@ -23,14 +28,7 @@ export function IssueCard({ issue }: IssueCardProps) {
             <AvatarFallback>{issue.user.login.slice(0, 2)}</AvatarFallback>
           </Avatar>
           <div>
-            <Link
-              href={issue.html_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium hover:underline"
-            >
-              {issue.title}
-            </Link>
+            <p className="font-medium">{issue.title}</p>
             <div className="mt-1 flex items-center space-x-4 text-sm text-muted-foreground">
               <span>#{issue.number}</span>
               <span>{updatedAt}</span>
@@ -71,6 +69,6 @@ export function IssueCard({ issue }: IssueCardProps) {
           ))}
         </div>
       )}
-    </div>
+    </Link>
   )
 }

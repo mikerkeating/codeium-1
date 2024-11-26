@@ -84,45 +84,20 @@ Since we haven't set up the GitHub OAuth credentials yet, you'll see the unauthe
 
 This is great; thank you. Let's now pull issues from github and display them in the issue list. What do we need to do?
 
----
-
-
 ### Prompt 7
 
 Please add the issue details page so that we can see an issue on its own page
 
 let's add a back button to return to the issues list
 
-### Prommpt 8
+### Prompt 8
 
-Let's add some styling. Let's make the issue list and issue details page look like github
-
-The styling has not shown in the app; please check
-
-Error fix
+No thanks. Let's add a form to create a new issue. Let's keep it simple - title and description only.
 
 ### Prompt 9
 
-Let's add a create issue page. 
-
-Let's add fields to the create issue page: Due Date, Priority, Labels, Assignees, URL, Screenshot. Please extend the mock data to include these fields.
+Let's make the github org and repo variables that can be set in env.local
 
 ### Prompt 10
 
-Let's add those new fields to the issue details page
-
-### Prompt 11
-
-Let's add form validation
-
-### Prompt 12
-
-N
-
-### Prompt 13
-
-Please add the header from the home page into both the issue details and issue create pages
-
-Please remove the green New Issue button from the body of the issue list and issue details pages (not from the header)
-
-In the New issue page, please move the breadcrumb to the top of the page - below the header but above the New Issue heading. 
+To confirm - this needs to be a static site with client side data fetching and not a server side app. What changes do we need to make?
