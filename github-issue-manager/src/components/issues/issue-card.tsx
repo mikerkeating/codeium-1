@@ -4,53 +4,68 @@ import { Issue } from '@/types'
 import { Badge } from '@/components/ui/badge'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
+import { Circle } from 'lucide-react'
 
 interface IssueCardProps {
   issue: Issue
 }
 
 export function IssueCard({ issue }: IssueCardProps) {
+  const statusColor = {
+    open: 'text-green-600',
+    in_progress: 'text-purple-600',
+    closed: 'text-red-600',
+  }[issue.status]
+
   return (
-    <Link
-      href={`/issues/${issue.id}`}
-      className="block p-4 border rounded-lg hover:border-primary transition-colors"
-    >
-      <div className="flex items-start justify-between gap-4">
+    <div className="border-b py-3 hover:bg-slate-50">
+      <div className="flex items-start gap-4 px-4">
+        <div className="mt-1">
+          <Circle 
+            className={`h-4 w-4 ${statusColor}`} 
+            fill="currentColor" 
+            strokeWidth={0}
+          />
+        </div>
         <div className="flex-1 min-w-0">
-          <h2 className="text-lg font-semibold truncate">{issue.title}</h2>
-          <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
-            {issue.description}
-          </p>
-          <div className="mt-2 flex items-center gap-2">
-            {issue.labels.map((label) => (
-              <Badge key={label} variant="outline">
-                {label}
-              </Badge>
-            ))}
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link
+              href={`/issues/${issue.id}`}
+              className="text-lg font-semibold hover:text-blue-600 hover:underline"
+            >
+              {issue.title}
+            </Link>
+            <div className="flex gap-1.5 flex-wrap">
+              {issue.labels.map((label) => (
+                <Badge
+                  key={label}
+                  variant="outline"
+                  className="px-2 py-0.5 text-xs bg-slate-100 hover:bg-slate-200"
+                >
+                  {label}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          <div className="mt-1 text-sm text-gray-600">
+            #{issue.id} opened {formatDistanceToNow(new Date(issue.createdAt))} ago by{' '}
+            <span className="font-medium text-gray-900">{issue.creator.name}</span>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          <Badge variant={getPriorityVariant(issue.priority)}>
-            {issue.priority}
-          </Badge>
-          <span className="text-xs text-muted-foreground">
-            {formatDistanceToNow(new Date(issue.createdAt), { addSuffix: true })}
-          </span>
-        </div>
+        {issue.assignees.length > 0 && (
+          <div className="flex -space-x-2">
+            {issue.assignees.map((assignee) => (
+              <img
+                key={assignee.id}
+                src={assignee.avatarUrl}
+                alt={assignee.name}
+                className="h-6 w-6 rounded-full ring-2 ring-white"
+                title={assignee.name}
+              />
+            ))}
+          </div>
+        )}
       </div>
-    </Link>
+    </div>
   )
-}
-
-function getPriorityVariant(priority: Issue['priority']) {
-  switch (priority) {
-    case 'high':
-      return 'destructive'
-    case 'medium':
-      return 'warning'
-    case 'low':
-      return 'secondary'
-    default:
-      return 'default'
-  }
 }
