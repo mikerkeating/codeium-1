@@ -2,17 +2,25 @@
 
 I'd like to make a website and would like you to help me.
 
-The website will manage GitHub issues. Users will be able to enter issues through a form with an AI Assistant. Developers will be able to triage those issues and add a work breakdown, estimates. Developers will be able to close issues and alert users. 
+The website will manage GitHub issues. 
+A page will allow users to login with their email address
+A page will show a basic user profile.
+A page will display a list of issues. The data will be fetched from the GitHub API.
+A page will display details for an issue. The data will be fetched from the GitHub API. This page will also allow users to update the issue. Updated data will be sent to the GitHub API.
+A page will allow users to create new issues. The data will be sent to the GitHub API.
+
+The website pages will all have the same layout and styling. The layout will have a header and a footer and sidebar. The styling will be based on the GitHub design system.
 
 I'd like to use the following tech stack:  
 
-Architecture: Client Side with data via APIs
+Architecture:
 Language: TypeScript
-Frontend Framework: Next.js v15 using App Router
+Frontend Framework: Next.js v15.0.3 using Pages Router
+Rendering: Static Site Generation (SSG) and Data Fetching
 State Management: Zustand
 Design System: Tailwind CSS
 Component Library: Shadcn/UI
-API Data Fetching: React Query
+API Data Fetching: SWR
 Caching: Zustand
 Runtime Type Checking: Zod
 Error Handling Library: Sentry
@@ -27,7 +35,7 @@ Code Formatting: Prettier
 Internationalisation: i18next
 Formatting: formatjs
 
-Please would you generate the initial code. 
+Please would you generate the initial code. Please don't add any additional files.
 
 ### Prompt 2 
 
@@ -97,3 +105,7 @@ N
 ### Prompt 13
 
 Please add the header from the home page into both the issue details and issue create pages
+
+Please remove the green New Issue button from the body of the issue list and issue details pages (not from the header)
+
+In the New issue page, please move the breadcrumb to the top of the page - below the header but above the New Issue heading. 
