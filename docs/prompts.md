@@ -39,7 +39,18 @@ Please add DS_store to the gitignore
 
 ### Prompt 4 
 
-Let's Create the main issue management interface
+Let's Create the main issue management interface ⚠ Port 3000 is in use, trying 3001 instead.
+ ⚠ Port 3001 is in use, trying 3002 instead.
+ ⚠ Port 3002 is in use, trying 3003 instead.
+ ⚠ Port 3003 is in use, trying 3004 instead.
+ ⚠ Port 3004 is in use, trying 3005 instead.
+ ⚠ Port 3005 is in use, trying 3006 instead.
+ ⚠ Port 3006 is in use, trying 3007 instead.
+ ⚠ Port 3007 is in use, trying 3008 instead.
+ ⚠ Port 3008 is in use, trying 3009 instead.
+ ⚠ Port 3009 is in use, trying 3010 instead.
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from /Users/macbookuser/Code/codeium-1/github-issue-manager/.next/cache/webpack/server-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+
 
 ### Prompt 5
 
@@ -60,3 +71,7 @@ let's add a back button to return to the issues list
 ## # Prommpt 8
 
 Let's add some styling. Let's make the issue list and issue details page look like github
+
+The styling has not shown in the app; please check
+
+Error fix
