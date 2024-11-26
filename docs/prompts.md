@@ -42,3 +42,12 @@ Please add DS_store to the gitignore
 Let's Create the main issue management interface
 
 ### Prompt 5
+
+how can i see the interface?
+
+followed by variuous error fixes
+
+### Prompt 6
+
+Please would you Add some mock data so we can see actual issues instead of the loading state
+
