@@ -2,6 +2,8 @@
 
 I'd like to make a website and would like you to help me.
 
+Let's call the project github-issue-manager-2.
+
 The website will manage GitHub issues. 
 A page will allow users to login with their email address
 A page will show a basic user profile.
@@ -36,6 +38,20 @@ Internationalisation: i18next
 Formatting: formatjs
 
 Please would you generate the initial code. Please don't add any additional files.
+
+`feat(app2): basics - prompt 1 [skip ci]`
+
+### Prompt 1a
+
+Please change sentry to version 8.40.0 and use Next JS v15.0.3
+
+### Prompt 1b
+
+Please run npm outdated
+
+### Please 1c 
+
+Please add a standard gitignore file for the stack
 
 ### Prompt 2 
 
