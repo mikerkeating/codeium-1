@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Loader2 } from 'lucide-react'
 import { createGitHubIssue } from '@/lib/github'
 import { Button } from '@/components/ui/button'
-import { Loader2 } from '@/components/ui/loader'
 
 export default function NewIssuePage() {
   const router = useRouter()
@@ -137,4 +136,11 @@ export default function NewIssuePage() {
       </div>
     </div>
   )
+}
+
+// Force static page with client-side data fetching
+export const getStaticProps = () => {
+  return {
+    props: {},
+  }
 }

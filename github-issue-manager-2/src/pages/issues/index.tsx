@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
-import { Loader2 } from 'lucide-react'
+import { Loader } from 'lucide-react'
 import useSWR from 'swr'
 import { getGitHubIssues } from '@/lib/github'
 import { IssueCard } from '@/components/issues/IssueCard'
@@ -27,7 +27,7 @@ export default function IssuesPage() {
   if (status === 'loading') {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <Loader className="h-8 w-8 animate-spin" />
       </div>
     )
   }
@@ -75,7 +75,7 @@ export default function IssuesPage() {
 
       {!issues && !error && (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin" />
+          <Loader className="h-8 w-8 animate-spin" />
         </div>
       )}
 
@@ -93,4 +93,11 @@ export default function IssuesPage() {
       ) : null}
     </div>
   )
+}
+
+// Force static page with client-side data fetching
+export const getStaticProps = () => {
+  return {
+    props: {},
+  }
 }

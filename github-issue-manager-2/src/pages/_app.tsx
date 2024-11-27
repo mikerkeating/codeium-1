@@ -1,21 +1,17 @@
-import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
-import { SessionProvider } from 'next-auth/react'
-import Layout from '@/components/layout/Layout'
-import { SWRConfig } from 'swr'
+import { ClerkProvider } from '@clerk/clerk-react'
+import '@/styles/globals.css'
 
-export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+const frontendApi = process.env.NEXT_PUBLIC_CLERK_FRONTEND_API
+
+if (!frontendApi) {
+  throw new Error('Missing Clerk Frontend API')
+}
+
+export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={session}>
-      <SWRConfig
-        value={{
-          fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()),
-        }}
-      >
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </SWRConfig>
-    </SessionProvider>
+    <ClerkProvider frontendApi={frontendApi as string}>
+      <Component {...pageProps} />
+    </ClerkProvider>
   )
 }

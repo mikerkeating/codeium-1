@@ -86,12 +86,16 @@ export default function IssueDetailsPage() {
         <div className="rounded-lg border bg-card p-6">
           <div className="flex items-start space-x-4">
             <Avatar>
-              <AvatarImage src={issue.user.avatar_url} alt={issue.user.login} />
-              <AvatarFallback>{issue.user.login.slice(0, 2)}</AvatarFallback>
+              {issue.user && (
+                <>
+                  <AvatarImage src={issue.user.avatar_url} alt={issue.user.login} />
+                  <AvatarFallback>{issue.user.login.slice(0, 2)}</AvatarFallback>
+                </>
+              )}
             </Avatar>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between">
-                <p className="font-medium">{issue.user.login}</p>
+                <p className="font-medium">{issue.user?.login}</p>
                 <p className="text-sm text-muted-foreground">
                   {format(new Date(issue.created_at), 'MMM d, yyyy')}
                 </p>
@@ -118,17 +122,21 @@ export default function IssueDetailsPage() {
                 >
                   <div className="flex items-start space-x-4">
                     <Avatar>
-                      <AvatarImage
-                        src={comment.user.avatar_url}
-                        alt={comment.user.login}
-                      />
-                      <AvatarFallback>
-                        {comment.user.login.slice(0, 2)}
-                      </AvatarFallback>
+                      {comment.user && (
+                        <>
+                          <AvatarImage
+                            src={comment.user.avatar_url}
+                            alt={comment.user.login}
+                          />
+                          <AvatarFallback>
+                            {comment.user.login.slice(0, 2)}
+                          </AvatarFallback>
+                        </>
+                      )}
                     </Avatar>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <p className="font-medium">{comment.user.login}</p>
+                        <p className="font-medium">{comment.user?.login}</p>
                         <p className="text-sm text-muted-foreground">
                           {format(new Date(comment.created_at), 'MMM d, yyyy')}
                         </p>
@@ -146,4 +154,19 @@ export default function IssueDetailsPage() {
       </div>
     </div>
   )
+}
+
+// Force static page with client-side data fetching
+export const getStaticProps = () => {
+  return {
+    props: {},
+  }
+}
+
+// Generate all possible paths at build time
+export const getStaticPaths = () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  }
 }
